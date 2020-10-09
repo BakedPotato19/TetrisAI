@@ -1,0 +1,68 @@
+
+        self.w, self.h = (300,600)
+        self.sw, self.sh = (200,self.h)
+        self.screen = pygame.display.set_mode((self.w+self.sw,self.h))
+        self.clock = pygame.time.Clock()
+        self.running = True
+
+        ### Pygame surfaces
+        self.surf1 = pygame.Surface((self.w,self.h))
+        self.surf2 = pygame.Surface((self.sw, self.sh))
+        
+        ### Tetris stuff
+        self.rows, self.cols = (20,10)
+        self.t = Tetris(self.rows, self.cols)
+
+    def paint(self):
+        self.surf1.fill((180,180,180))
+        self.surf2.fill((60,60,60))
+        Renderer.drawtiles(self.surf1,self.t.cpiece.matrix,(self.w/self.cols, self.h/self.rows),self.t.offset)
+        Renderer.drawtiles(self.surf1,self.t.board,(self.w/self.cols, self.h/self.rows), (0,0))
+        Renderer.drawnext(self.surf2,self.t.npiece.matrix,(self.w/self.cols, self.h/self.rows),(1,1))
+
+
+        self.screen.blit(self.surf1,(0,0))
+        self.screen.blit(self.surf2,(self.w,0))
+
+        
+        pygame.display.update()
+
+
+    def events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                pygame.quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.t.moveLeft = True
+                if event.key == pygame.K_RIGHT:
+                    self.t.moveRight = True
+                if event.key == pygame.K_DOWN:
+                    self.t.tickcap = 3
+                if event.key == pygame.K_z:
+                    self.t.rotateRight = True
+                if event.key == pygame.K_x:
+                    self.t.rotateLeft = True
+                if event.key == pygame.K_SPACE:
+                    self.t.tickcap = 1
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    self.t.moveLeft = False
+                if event.key == pygame.K_RIGHT:
+                    self.t.moveRight = False
+                if event.key == pygame.K_DOWN:
+                    self.t.tickcap = 20
+                if event.key == pygame.K_SPACE:
+                    self.t.tickcap = 20
+
+    def update(self):
+        
+    def run(self):
+        while self.running and self.t.running:
+            self.clock.tick(60)
+            self.events()
+            self.update()
+            self.paint() 
